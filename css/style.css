@@ -23,8 +23,8 @@ body {
 
 #money {
     position: absolute;
-    top: 30px;
-    left: 20px;
+    top: 5%;
+    left: 10%;
     height: 50px;
     width: 200px;
     padding: 5px;
@@ -36,14 +36,14 @@ body {
 }
 
 #cash,
-#winnings {
+#bank {
     color: white;
 }
 
 #actions {
     position: absolute;
     bottom: 10%;
-    left: 5%;
+    left: 15%;
     text-align: center;
     background-color: black;
     padding: 5px;
@@ -51,9 +51,10 @@ body {
 }
 
 .btn {
-    font-size: 12px;
-    padding-left: 2px;
-    padding-right: 2px;
+    font-size: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 5px;
     color: white;
     border-radius: 2px;
     cursor: pointer;
@@ -72,19 +73,7 @@ body {
 }
 
 #stand {
-    background-color: rgb(255, 187, 0);
-}
-
-#split {
-    background-color: rgb(255, 17, 0);
-}
-
-#double-down {
-    background-color: rgb(4, 0, 255);
-}
-
-#insurance {
-    background-color: rgb(174, 0, 255);
+    background-color: rgb(199, 0, 0);
 }
 
 strong {
@@ -95,5 +84,6 @@ strong {
 
 #bet {
     width: 100px;
-    height: 15px;
+    height: 17px;
+    margin-right: 5px;
 }
