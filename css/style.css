@@ -87,3 +87,19 @@ strong {
     height: 17px;
     margin-right: 5px;
 }
+
+@media all and (max-width: 1000px) {
+    #money {
+        top: 10%;
+        left: 5%;
+        height: 50px;
+        width: 150px;
+        font-size: 15px;
+
+    }
+
+    .btn {
+        font-size: 12px;
+        margin-left: 5px;
+    }
+}
