@@ -161,9 +161,9 @@ function stand() {
 		message = "DEALER BUST!!";
 	} else if (playerSum == dealerSum) {
 		message = "NO WINNERS!!";
-	} else if (playerSum > dealerAceCount) {
+	} else if (playerSum > dealerSum) {
 		message = "YOU WIN!!";
-	} else if (dealerSum > playerAceCount) {
+	} else if (dealerSum > playerSum) {
 		message = "YOU LOSE!!";
 	}
 
