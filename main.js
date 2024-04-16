@@ -1,3 +1,5 @@
+var playerMoney = 1000; // Variable to track player's money
+
 var dealerSum = 0;
 var playerSum = 0;
 
@@ -10,10 +12,42 @@ var deck;
 var canHit = true;
 
 window.onload = function () {
+	updateMoneyDisplay();
 	buildDeck();
 	shuffleDeck();
-	startGame();
+
+	// Attach the handleDeal function to the Deal button
+	document.getElementById("deal").addEventListener("click", handleDeal);
 };
+
+function handleDeal() {
+	let betInput = document.getElementById("bet").value.trim();
+	console.log("Bet Input:", betInput);
+	let bet = parseFloat(betInput);
+	console.log("Bet:", bet);
+
+	// Check if the parsed value is valid
+	if (isNaN(bet) || bet <= 0 || bet > playerMoney || betInput === "") {
+		alert("Please enter a valid bet.");
+		return;
+	}
+
+	// Check if the bet exceeds two decimal places
+	if ((bet * 100) % 1 !== 0) {
+		alert("Please enter a bet with up to two decimal places.");
+		return;
+	}
+
+	playerMoney -= bet; // Deduct the bet amount from player's money
+	updateMoneyDisplay(); // Update money display
+
+	// Start the game after a valid bet is input and the Deal button is pressed
+	startGame();
+}
+
+function updateMoneyDisplay() {
+	document.getElementById("cash").innerText = "Cash: £" + playerMoney; // Update money display
+}
 
 function buildDeck() {
 	let values = [
@@ -49,15 +83,33 @@ function shuffleDeck() {
 		deck[i] = deck[j];
 		deck[j] = temp;
 	}
-	console.log(deck);
 }
 
 function startGame() {
+	let betInput = document.getElementById("bet").value.trim();
+	console.log("Bet Input:", betInput);
+	let bet = parseFloat(betInput);
+	console.log("Bet:", bet);
+
+	// Check if the parsed value is valid
+	if (isNaN(bet) || bet <= 0 || bet > playerMoney || betInput === "") {
+		alert("Please enter a valid bet.");
+		return;
+	}
+
+	// Check if the bet exceeds two decimal places
+	if ((bet * 100) % 1 !== 0) {
+		alert("Please enter a bet with up to two decimal places.");
+		return;
+	}
+
+	playerMoney -= bet; // Deduct the bet amount from player's money
+	updateMoneyDisplay(); // Update money display
+
 	hidden = deck.pop();
 	dealerSum += getValue(hidden);
 	dealerAceCount += checkAce(hidden);
-	console.log(hidden);
-	console.log(dealerSum);
+
 	while (dealerSum < 17) {
 		let cardImg = document.createElement("img");
 		let card = deck.pop();
@@ -65,9 +117,7 @@ function startGame() {
 		dealerSum += getValue(card);
 		dealerAceCount += checkAce(card);
 		document.getElementById("dealer").append(cardImg);
-		console.log("Card Image Path:", "./img/" + card + ".png"); // Log the constructed image source path
 	}
-	console.log(dealerSum);
 
 	for (let i = 0; i < 2; i++) {
 		let cardImg = document.createElement("img");
@@ -77,8 +127,7 @@ function startGame() {
 		playerAceCount += checkAce(card);
 		document.getElementById("player").append(cardImg);
 	}
-	console.log(playerSum);
-	document.getElementById("deal").addEventListener("click", deal);
+
 	document.getElementById("hit").addEventListener("click", hit);
 	document.getElementById("stand").addEventListener("click", stand);
 }

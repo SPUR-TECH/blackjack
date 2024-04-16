@@ -189,6 +189,11 @@ strong {
     }
 }
 
+#results {
+    font-size: 45px;
+    color: white;
+}
+
 @media all and (max-width: 600px) {
     .btn {
         font-size: 10px;
