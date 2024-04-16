@@ -19,35 +19,91 @@ body {
     height: 100vh;
     width: 100%;
     position: relative;
+    text-align: center;
 }
 
 #money {
     position: absolute;
     top: 5%;
     left: 10%;
-    height: 50px;
+    height: 30px;
     width: 200px;
     padding: 5px;
     background-color: black;
     border-radius: 5px;
     border: 2px solid rgb(255, 196, 0);
-    content: "";
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
-#cash,
-#bank {
+#cash {
     color: white;
+    margin-left: -100px;
+}
+
+#dealer {
+    display: block;
+    align-items: center;
+    justify-content: center;
+}
+
+#dealer img {
+    height: 10%;
+    width: 5%;
+    margin-top: 5%;
+    padding-bottom: 20px;
+    border-radius: 5px;
+}
+
+#dealer-score {
+    position: absolute;
+    font-size: 15px;
+    left: 50%;
+    transform: translate(-50%);
+    padding: 5px;
+    background-color: black;
+    width: auto;
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    border: 2px solid rgb(255, 196, 0);
+}
+
+#player {
+    display: block;
+    align-items: center;
+    justify-content: center;
+}
+
+#player img {
+    height: 10%;
+    width: 5%;
+    margin-top: 10%;
+    border-radius: 5px;
+    padding-bottom: 20px;
+}
+
+#player-score {
+    position: absolute;
+    font-size: 15px;
+    left: 50%;
+    transform: translate(-50%);
+    padding: 5px;
+    background-color: black;
+    width: auto;
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    border: 2px solid rgb(255, 196, 0);
+    margin-bottom: 20px;
 }
 
 #actions {
     position: absolute;
     bottom: 10%;
-    left: 15%;
-    text-align: center;
-    background-color: black;
+    left: 50%;
+    transform: translate(-50%);
     padding: 5px;
     border-radius: 5px;
+    background-color: black;
+    border: 2px solid rgb(255, 196, 0);
 }
 
 .btn {
@@ -92,14 +148,46 @@ strong {
     #money {
         top: 10%;
         left: 5%;
-        height: 50px;
         width: 150px;
         font-size: 15px;
+    }
 
+    #dealer img {
+        margin-top: 50px;
+        margin-bottom: -10px;
+        border-radius: 3px;
+    }
+
+    #dealer-score {
+        font-size: 12px;
+    }
+
+    #player img {
+        border-radius: 3px;
+        margin-bottom: -10px;
+    }
+
+    #player-score {
+        font-size: 12px;
+    }
+
+    #cash {
+        margin-left: -70px;
     }
 
     .btn {
         font-size: 12px;
         margin-left: 5px;
+    }
+}
+
+@media all and (max-width: 600px) {
+    .btn {
+        font-size: 10px;
+        margin-left: 4px;
+    }
+
+    #bet {
+        width: 70px;
     }
 }
