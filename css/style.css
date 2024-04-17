@@ -4,6 +4,27 @@
     box-sizing: border-box;
 }
 
+#turn-phone-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#top-arrow {
+    margin-top: 20px;
+    margin-bottom: -30px;
+    margin-left: -30px;
+}
+
+#turn-phone {
+    margin-top: 30px;
+}
+
+#bottom-arrow {
+    margin-left: 120px;
+}
+
 body {
     background-color: rgb(15, 66, 5);
 }
@@ -202,5 +223,11 @@ strong {
 
     #bet {
         width: 70px;
+    }
+}
+
+@media all and (max-width: 400px) {
+    #wrapper {
+        display: none;
     }
 }
