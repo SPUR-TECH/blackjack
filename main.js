@@ -18,9 +18,7 @@ window.onload = function () {
 
 function handleDeal() {
 	let betInput = document.getElementById("bet").value.trim();
-	console.log("Bet Input:", betInput);
 	let bet = parseFloat(betInput);
-	console.log("Bet:", bet);
 
 	// Check if the parsed value is valid
 	if (isNaN(bet) || bet <= 0 || bet > playerMoney || betInput === "") {
@@ -82,22 +80,40 @@ function shuffleDeck() {
 }
 
 function startGame(bet) {
+	resetGame();
+
 	playerMoney -= bet; // Deduct the bet amount from player's money
 	updateMoneyDisplay(); // Update money display
 
-	hidden = deck.pop();
+	// Clear the player and dealer hands
+	document.getElementById("player").innerHTML = "";
+	document.getElementById("dealer").innerHTML = "";
+	dealerSum = 0;
+	playerSum = 0;
+	dealerAceCount = 0;
+	playerAceCount = 0;
+
+	// Deal the hidden card for the dealer
+	hidden = deck.pop(); // Assign a random card from the deck to the hidden variable
+	let dealerHiddenCardImg = document.createElement("img");
+	dealerHiddenCardImg.src = "./img/back.png"; // Display the back side image for the hidden card
+	dealerHiddenCardImg.alt = "Hidden Card";
+	document.getElementById("dealer").appendChild(dealerHiddenCardImg);
+
+	// Deal the dealer's second card (visible)
+	let card2 = deck.pop();
+	let dealerVisibleCardImg = document.createElement("img");
+	dealerVisibleCardImg.src = "./img/" + card2 + ".png";
+	dealerVisibleCardImg.alt = "Dealer Card";
+	document.getElementById("dealer").appendChild(dealerVisibleCardImg);
+	dealerSum += getValue(card2); // Add the value of the second card to dealerSum
+	dealerAceCount += checkAce(card2);
+
+	// If the hidden card is not an Ace, add its value to dealerSum
 	dealerSum += getValue(hidden);
 	dealerAceCount += checkAce(hidden);
 
-	while (dealerSum < 17) {
-		let cardImg = document.createElement("img");
-		let card = deck.pop();
-		cardImg.src = "./img/" + card + ".png";
-		dealerSum += getValue(card);
-		dealerAceCount += checkAce(card);
-		document.getElementById("dealer").append(cardImg);
-	}
-
+	// Deal the player's initial two cards
 	for (let i = 0; i < 2; i++) {
 		let cardImg = document.createElement("img");
 		let card = deck.pop();
@@ -111,14 +127,25 @@ function startGame(bet) {
 	document.getElementById("dealer-score").innerText = dealerSum;
 	document.getElementById("player-score").innerText = playerSum;
 
-	document.getElementById("hit").addEventListener("click", hit);
-	document.getElementById("stand").addEventListener("click", stand);
+	// Check for BLACKJACK!!
+	if (
+		playerSum === 21 &&
+		document.getElementById("player").childNodes.length === 2
+	) {
+		document.getElementById("results").innerText = "BLACKJACK!!";
+		document.getElementById("deal").disabled = false; // Enable the Deal button
+	} else {
+		// Add event listeners for Hit and Stand
+		document.getElementById("hit").addEventListener("click", hit);
+		document.getElementById("stand").addEventListener("click", stand);
+	}
 }
 
 function hit() {
 	if (!canHit) {
 		return;
 	}
+
 	let cardImg = document.createElement("img");
 	let card = deck.pop();
 	cardImg.src = "./img/" + card + ".png";
@@ -126,8 +153,12 @@ function hit() {
 	playerAceCount += checkAce(card);
 	document.getElementById("player").append(cardImg);
 
+	// Update player's score display
+	document.getElementById("player-score").innerText = playerSum;
+
 	if (reduceAce(playerSum, playerAceCount) > 21) {
 		canHit = false;
+		endGame("YOU BUST!!");
 	}
 }
 
@@ -135,8 +166,43 @@ function stand() {
 	dealerSum = reduceAce(dealerSum, dealerAceCount);
 	playerSum = reduceAce(playerSum, playerAceCount);
 	canHit = false;
-	document.getElementById("hidden").src = "./img/" + hidden + ".png";
 
+	// Update the hidden card to show its value
+	document.getElementById("dealer").childNodes[0].src =
+		"./img/" + hidden + ".png";
+
+	// Display the updated score after revealing the hidden card
+	document.getElementById("dealer-score").innerText = dealerSum;
+
+	// Determine if the dealer should hit or stand based on their current total
+	let interval = setInterval(function () {
+		if (dealerSum < 17) {
+			let cardImg = document.createElement("img");
+			let card = deck.pop();
+			cardImg.src = "./img/" + card + ".png";
+			dealerSum += getValue(card);
+			dealerAceCount += checkAce(card);
+			document.getElementById("dealer").append(cardImg);
+			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
+			// Update the displayed score
+			document.getElementById("dealer-score").innerText = dealerSum;
+		} else {
+			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
+			// Dont show the player's score until the player stands
+			document.getElementById("player-score").style.display = "block";
+			// Dont show the dealer's score until the dealer stands
+			document.getElementById("dealer-score").style.display = "block";
+			// Determine the outcome of the game
+			determineOutcome();
+			// Check if dealer busts after the game outcome is determined
+			if (dealerSum > 21) {
+				document.getElementById("results").innerText = "DEALER BUST!!";
+			}
+		}
+	}, 1000); // Adjust the delay (in milliseconds) between drawing cards
+}
+
+function determineOutcome() {
 	let message = "";
 	if (playerSum > 21) {
 		message = "YOU BUST!!";
@@ -150,8 +216,6 @@ function stand() {
 		message = "YOU LOSE!!";
 	}
 
-	document.getElementById("dealer-score").innerText = dealerSum;
-	document.getElementById("player-score").innerText = playerSum;
 	document.getElementById("results").innerText = message;
 
 	// Enable the Deal button again
@@ -185,4 +249,28 @@ function reduceAce(playerSum, playerAceCount) {
 		playerAceCount -= 1;
 	}
 	return playerSum;
+}
+
+function resetGame() {
+	// Remove old score and message
+	document.getElementById("results").innerText = "";
+	document.getElementById("dealer-score").innerText = "";
+	document.getElementById("player-score").innerText = "";
+
+	// Clear player and dealer hands
+	document.getElementById("player").innerHTML = "";
+	document.getElementById("dealer").innerHTML = "";
+
+	// Hide the scores
+	document.getElementById("dealer-score").style.display = "none";
+	document.getElementById("player-score").style.display = "none";
+}
+
+function endGame(message) {
+	document.getElementById("results").innerText = message;
+	// Disable Hit and Stand buttons
+	document.getElementById("hit").disabled = true;
+	document.getElementById("stand").disabled = true;
+	// Enable the Deal button
+	document.getElementById("deal").disabled = false;
 }
