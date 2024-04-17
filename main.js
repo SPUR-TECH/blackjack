@@ -1,14 +1,10 @@
 var playerMoney = 1000; // Variable to track player's money
-
 var dealerSum = 0;
 var playerSum = 0;
-
 var dealerAceCount = 0;
 var playerAceCount = 0;
-
 var hidden;
 var deck;
-
 var canHit = true;
 
 window.onload = function () {
@@ -38,11 +34,11 @@ function handleDeal() {
 		return;
 	}
 
-	playerMoney -= bet; // Deduct the bet amount from player's money
-	updateMoneyDisplay(); // Update money display
+	// Disable the Deal button to prevent multiple deals
+	document.getElementById("deal").disabled = true;
 
 	// Start the game after a valid bet is input and the Deal button is pressed
-	startGame();
+	startGame(bet);
 }
 
 function updateMoneyDisplay() {
@@ -85,24 +81,7 @@ function shuffleDeck() {
 	}
 }
 
-function startGame() {
-	let betInput = document.getElementById("bet").value.trim();
-	console.log("Bet Input:", betInput);
-	let bet = parseFloat(betInput);
-	console.log("Bet:", bet);
-
-	// Check if the parsed value is valid
-	if (isNaN(bet) || bet <= 0 || bet > playerMoney || betInput === "") {
-		alert("Please enter a valid bet.");
-		return;
-	}
-
-	// Check if the bet exceeds two decimal places
-	if ((bet * 100) % 1 !== 0) {
-		alert("Please enter a bet with up to two decimal places.");
-		return;
-	}
-
+function startGame(bet) {
 	playerMoney -= bet; // Deduct the bet amount from player's money
 	updateMoneyDisplay(); // Update money display
 
@@ -127,6 +106,10 @@ function startGame() {
 		playerAceCount += checkAce(card);
 		document.getElementById("player").append(cardImg);
 	}
+
+	// Update score displays
+	document.getElementById("dealer-score").innerText = dealerSum;
+	document.getElementById("player-score").innerText = playerSum;
 
 	document.getElementById("hit").addEventListener("click", hit);
 	document.getElementById("stand").addEventListener("click", stand);
@@ -170,6 +153,9 @@ function stand() {
 	document.getElementById("dealer-score").innerText = dealerSum;
 	document.getElementById("player-score").innerText = playerSum;
 	document.getElementById("results").innerText = message;
+
+	// Enable the Deal button again
+	document.getElementById("deal").disabled = false;
 }
 
 function getValue(card) {
