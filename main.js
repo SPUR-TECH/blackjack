@@ -15,9 +15,21 @@ window.onload = function () {
 
 	// Attach the handleDeal function to the Deal button
 	document.getElementById("deal").addEventListener("click", handleDeal);
+
+	// Listen for Enter key press event in the bet input field
+	document.getElementById("bet").addEventListener("keypress", function (event) {
+		if (event.key === "Enter") {
+			handleDeal();
+		}
+	});
 };
 
 function handleDeal() {
+	if (playerMoney <= 0) {
+		alert("Out of cash. Please reload the game.");
+		return;
+	}
+
 	let betInput = document.getElementById("bet").value.trim();
 	let bet = parseFloat(betInput);
 
@@ -29,7 +41,7 @@ function handleDeal() {
 
 	// Check if the bet exceeds two decimal places
 	if ((bet * 100) % 1 !== 0) {
-		alert("Please enter a bet with up to two decimal places.");
+		alert("Please enter a bet.");
 		return;
 	}
 
