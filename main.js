@@ -87,6 +87,11 @@ function startGame(bet) {
 	playerMoney -= bet; // Deduct the bet amount from player's money
 	updateMoneyDisplay(); // Update money display
 
+	canHit = true; // Reset canHit to true
+
+	// Disable the Deal button at the start of the game
+	document.getElementById("deal").disabled = true;
+
 	// Clear the player and dealer hands
 	document.getElementById("player").innerHTML = "";
 	document.getElementById("dealer").innerHTML = "";
@@ -129,20 +134,103 @@ function startGame(bet) {
 	document.getElementById("dealer-score").innerText = dealerSum;
 	document.getElementById("player-score").innerText = playerSum;
 
+	// Add event listeners for Hit and Stand
+	document.getElementById("hit").addEventListener("click", hit);
+	document.getElementById("stand").addEventListener("click", stand);
+
 	// Check for BLACKJACK!!
 	if (
 		playerSum === 21 &&
 		document.getElementById("player").childNodes.length === 2
 	) {
 		document.getElementById("results").innerText = "BLACKJACK!!";
-		document.getElementById("deal").disabled = false; // Enable the Deal button
-		// If player wins, transfer the bet amount back to player's money
-		playerMoney += 3 * currentBet; // Double the bet amount (original bet + win)
-	} else {
-		// Add event listeners for Hit and Stand
-		document.getElementById("hit").addEventListener("click", hit);
-		document.getElementById("stand").addEventListener("click", stand);
+		// Update player's money instantly
+		playerMoney += 2.5 * currentBet; // Double the bet amount (original bet + win)
+		updateMoneyDisplay(); // Update the displayed money
 	}
+}
+
+function determineOutcome() {
+	let message = "";
+	let winnings = 0;
+
+	if (playerSum > 21) {
+		message = "YOU BUST!!";
+	} else if (dealerSum > 21) {
+		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
+		message = "DEALER BUST!!";
+	} else if (playerSum === dealerSum) {
+		winnings = currentBet; // Return the original bet amount
+		message = "NO WINNERS!!";
+	} else if (playerSum > dealerSum) {
+		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
+		message = "YOU WIN!!";
+	} else if (dealerSum > playerSum) {
+		message = "YOU LOSE!!";
+	}
+
+	playerMoney += winnings; // Update player's money
+	updateMoneyDisplay(); // Update the displayed money
+
+	document.getElementById("results").innerText = message;
+
+	// Show the scores after the game outcome is determined
+	document.getElementById("player-score").innerText = playerSum;
+	document.getElementById("dealer-score").innerText = dealerSum;
+	document.getElementById("player-score").style.display = "block";
+	document.getElementById("dealer-score").style.display = "block";
+
+	// Enable the Deal button only after the game outcome is determined
+	document.getElementById("deal").disabled = false;
+}
+function determineDealerAction() {
+	// Determine if the dealer should hit or stand based on their current total
+	if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
+		// If dealer's total is less than 17 or dealer has a soft 17, they must hit
+		dealerHit();
+	} else {
+		// Otherwise, dealer stands
+		dealerStand();
+	}
+}
+
+function dealerHit() {
+	let interval = setInterval(function () {
+		if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
+			// Dealer must hit if total is less than 17 or dealer has a soft 17
+			let cardImg = document.createElement("img");
+			let card = deck.pop();
+			cardImg.src = "./img/" + card + ".png";
+			dealerSum += getValue(card);
+			dealerAceCount += checkAce(card);
+			document.getElementById("dealer").append(cardImg);
+			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
+			// Update the displayed score
+			document.getElementById("dealer-score").innerText = dealerSum;
+		} else {
+			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
+			// Show the player's score after the dealer stands
+			document.getElementById("player-score").style.display = "block";
+			// Show the dealer's score after the dealer stands
+			document.getElementById("dealer-score").style.display = "block";
+			// Determine the outcome of the game
+			determineOutcome();
+			// Check if dealer busts after the game outcome is determined
+			if (dealerSum > 21) {
+				document.getElementById("results").innerText = "DEALER BUST!!";
+			}
+		}
+	}, 1000); // Adjust the delay (in milliseconds) between drawing cards
+}
+
+function dealerStand() {
+	// Dealer stands, no further action needed
+	// Show the player's score after the dealer stands
+	document.getElementById("player-score").style.display = "block";
+	// Show the dealer's score after the dealer stands
+	document.getElementById("dealer-score").style.display = "block";
+	// Determine the outcome of the game
+	determineOutcome();
 }
 
 function hit() {
@@ -155,12 +243,18 @@ function hit() {
 	cardImg.src = "./img/" + card + ".png";
 	playerSum += getValue(card);
 	playerAceCount += checkAce(card);
+
+	// Check if the player's score exceeds 21 and adjust the value of Ace if necessary
+	if (playerSum > 21) {
+		playerSum = reduceAce(playerSum, playerAceCount);
+	}
+
 	document.getElementById("player").append(cardImg);
 
-	// Update player's score display
+	// Update player's score display after adjusting the value of Ace
 	document.getElementById("player-score").innerText = playerSum;
 
-	if (reduceAce(playerSum, playerAceCount) > 21) {
+	if (playerSum > 21) {
 		canHit = false;
 		endGame("YOU BUST!!");
 	}
@@ -208,26 +302,35 @@ function stand() {
 
 function determineOutcome() {
 	let message = "";
+	let winnings = 0;
+
 	if (playerSum > 21) {
 		message = "YOU BUST!!";
 	} else if (dealerSum > 21) {
-		// If player wins, transfer the bet amount back to player's money
-		playerMoney += 2 * currentBet; // Double the bet amount (original bet + win)
+		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
 		message = "DEALER BUST!!";
 	} else if (playerSum === dealerSum) {
+		winnings = currentBet; // Return the original bet amount
 		message = "NO WINNERS!!";
 	} else if (playerSum > dealerSum) {
+		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
 		message = "YOU WIN!!";
-		// If player wins, transfer the bet amount back to player's money
-		playerMoney += 2 * currentBet; // Double the bet amount (original bet + win)
 	} else if (dealerSum > playerSum) {
 		message = "YOU LOSE!!";
 	}
 
+	playerMoney += winnings; // Update player's money
 	updateMoneyDisplay(); // Update the displayed money
+
 	document.getElementById("results").innerText = message;
 
-	// Enable the Deal button again
+	// Show the scores after the game outcome is determined
+	document.getElementById("player-score").innerText = playerSum;
+	document.getElementById("dealer-score").innerText = dealerSum;
+	document.getElementById("player-score").style.display = "block";
+	document.getElementById("dealer-score").style.display = "block";
+
+	// Enable the Deal button only after the game outcome is determined
 	document.getElementById("deal").disabled = false;
 }
 
@@ -274,7 +377,10 @@ function resetGame() {
 	document.getElementById("dealer-score").style.display = "none";
 	document.getElementById("player-score").style.display = "none";
 
-	// Re-add event listener for the "Stand" button
+	// Remove event listener for the "Stand" button
+	document.getElementById("stand").removeEventListener("click", stand);
+
+	// Add event listener for the "Stand" button
 	document.getElementById("stand").addEventListener("click", stand);
 
 	// Remove event listener for the "Hit" button
@@ -282,6 +388,9 @@ function resetGame() {
 
 	// Reset canHit to allow the player to hit again
 	canHit = true;
+
+	// Reset the player's Ace count to 0 when the game is reset
+	playerAceCount = 0;
 }
 
 function endGame(message) {
