@@ -198,6 +198,9 @@ function determineOutcome() {
 
 	// Enable the Deal button only after the game outcome is determined
 	document.getElementById("deal").disabled = false;
+
+	// Clear the current bet
+	clearBet();
 }
 
 function determineDealerAction() {
@@ -317,40 +320,6 @@ function stand() {
 	}, 1000); // Adjust the delay (in milliseconds) between drawing cards
 }
 
-function determineOutcome() {
-	let message = "";
-	let winnings = 0;
-
-	if (playerSum > 21) {
-		message = "YOU BUST!!";
-	} else if (dealerSum > 21) {
-		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
-		message = "DEALER BUST!!";
-	} else if (playerSum === dealerSum) {
-		winnings = currentBet; // Return the original bet amount
-		message = "NO WINNERS!!";
-	} else if (playerSum > dealerSum) {
-		winnings = 2 * currentBet; // Double the bet amount (original bet + win)
-		message = "YOU WIN!!";
-	} else if (dealerSum > playerSum) {
-		message = "YOU LOSE!!";
-	}
-
-	playerMoney += winnings; // Update player's money
-	updateMoneyDisplay(); // Update the displayed money
-
-	document.getElementById("results").innerText = message;
-
-	// Show the scores after the game outcome is determined
-	document.getElementById("player-score").innerText = playerSum;
-	document.getElementById("dealer-score").innerText = dealerSum;
-	document.getElementById("player-score").style.display = "block";
-	document.getElementById("dealer-score").style.display = "block";
-
-	// Enable the Deal button only after the game outcome is determined
-	document.getElementById("deal").disabled = false;
-}
-
 function getValue(card) {
 	let data = card.split("-"); // ["4-C"] == ["4", "C"]
 	let value = data[0];
@@ -378,6 +347,11 @@ function reduceAce(playerSum, playerAceCount) {
 		playerAceCount -= 1;
 	}
 	return playerSum;
+}
+
+function clearBet() {
+	currentBet = 0;
+	document.getElementById("bet").innerText = "Bet: £" + currentBet;
 }
 
 function resetGame() {

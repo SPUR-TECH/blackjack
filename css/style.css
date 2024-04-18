@@ -54,7 +54,6 @@ body {
     background-color: black;
     border-radius: 5px;
     border: 2px solid rgb(255, 196, 0);
-    opacity: 0.6;
 }
 
 #cash {
@@ -100,7 +99,7 @@ body {
 #player img {
     height: 10%;
     width: 5%;
-    margin-top: 9%;
+    margin-top: 8%;
     border-radius: 5px;
     margin-left: 2px;
 }
