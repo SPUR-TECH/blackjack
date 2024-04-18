@@ -3,6 +3,7 @@ var dealerSum = 0;
 var playerSum = 0;
 var dealerAceCount = 0;
 var playerAceCount = 0;
+var currentBet = 0;
 var hidden;
 var deck;
 var canHit = true;
@@ -82,6 +83,7 @@ function shuffleDeck() {
 function startGame(bet) {
 	resetGame();
 
+	currentBet = bet; // Set the current bet amount
 	playerMoney -= bet; // Deduct the bet amount from player's money
 	updateMoneyDisplay(); // Update money display
 
@@ -134,6 +136,8 @@ function startGame(bet) {
 	) {
 		document.getElementById("results").innerText = "BLACKJACK!!";
 		document.getElementById("deal").disabled = false; // Enable the Deal button
+		// If player wins, transfer the bet amount back to player's money
+		playerMoney += 3 * currentBet; // Double the bet amount (original bet + win)
 	} else {
 		// Add event listeners for Hit and Stand
 		document.getElementById("hit").addEventListener("click", hit);
@@ -207,15 +211,20 @@ function determineOutcome() {
 	if (playerSum > 21) {
 		message = "YOU BUST!!";
 	} else if (dealerSum > 21) {
+		// If player wins, transfer the bet amount back to player's money
+		playerMoney += 2 * currentBet; // Double the bet amount (original bet + win)
 		message = "DEALER BUST!!";
-	} else if (playerSum == dealerSum) {
+	} else if (playerSum === dealerSum) {
 		message = "NO WINNERS!!";
 	} else if (playerSum > dealerSum) {
 		message = "YOU WIN!!";
+		// If player wins, transfer the bet amount back to player's money
+		playerMoney += 2 * currentBet; // Double the bet amount (original bet + win)
 	} else if (dealerSum > playerSum) {
 		message = "YOU LOSE!!";
 	}
 
+	updateMoneyDisplay(); // Update the displayed money
 	document.getElementById("results").innerText = message;
 
 	// Enable the Deal button again
@@ -264,6 +273,15 @@ function resetGame() {
 	// Hide the scores
 	document.getElementById("dealer-score").style.display = "none";
 	document.getElementById("player-score").style.display = "none";
+
+	// Re-add event listener for the "Stand" button
+	document.getElementById("stand").addEventListener("click", stand);
+
+	// Remove event listener for the "Hit" button
+	document.getElementById("hit").removeEventListener("click", hit);
+
+	// Reset canHit to allow the player to hit again
+	canHit = true;
 }
 
 function endGame(message) {
