@@ -100,7 +100,7 @@ body {
 #player img {
     height: 10%;
     width: 5%;
-    margin-top: 10%;
+    margin-top: 9%;
     border-radius: 5px;
     margin-left: 2px;
 }
@@ -246,7 +246,6 @@ body {
 
     #player img {
         border-radius: 3px;
-        margin-bottom: -140px;
     }
 
     #player-score {
@@ -292,13 +291,9 @@ body {
     }
 }
 
-@media all and (max-width: 720px) {
+@media all and (max-width: 750px) {
     #player img {
-        height: 10%;
-        width: 5%;
-        padding-bottom: 22px;
-        border-radius: 5px;
-        margin-left: 2px;
+        margin-top: 50px;
     }
 }
 
