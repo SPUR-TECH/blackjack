@@ -163,6 +163,15 @@ body {
     color: rgb(0, 255, 0);
 }
 
+#results {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 65px;
+    color: white;
+}
+
 #restart-button {
     position: absolute;
     top: 50%;
@@ -280,6 +289,16 @@ body {
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 15px;
+    }
+}
+
+@media all and (max-width: 720px) {
+    #player img {
+        height: 10%;
+        width: 5%;
+        padding-bottom: 22px;
+        border-radius: 5px;
+        margin-left: 2px;
     }
 }
 
