@@ -130,6 +130,7 @@ body {
     border-radius: 5px;
     background-color: black;
     border: 2px solid rgb(255, 196, 0);
+    width: 300px;
 }
 
 .btn {
@@ -158,16 +159,8 @@ body {
     background-color: rgb(199, 0, 0);
 }
 
-strong {
-    font-size: 12px;
-    margin-left: 5px;
-    color: rgb(0, 255, 0);
-}
-
 #bet {
-    width: 100px;
-    height: 17px;
-    margin-right: 5px;
+    color: rgb(0, 255, 0);
 }
 
 #restart-button {
@@ -189,6 +182,32 @@ strong {
     box-shadow: 8px 8px 18px black;
     cursor: pointer;
     display: none;
+}
+
+#chips-container {
+    position: absolute;
+    bottom: 20%;
+    left: 10%;
+}
+
+.chip {
+    position: relative;
+    display: inline-block;
+}
+
+.chip img {
+    width: 100px;
+    height: auto;
+}
+
+.chip-value {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 20px;
 }
 
 @media all and (max-width: 1000px) {
@@ -227,29 +246,47 @@ strong {
         font-size: 11px;
     }
 
-    #cash {
-        margin-left: -70px;
+    #actions {
+        bottom: 8%;
     }
 
     .btn {
-        font-size: 12px;
+        font-size: 15px;
         margin-left: 5px;
     }
-}
 
-#results {
-    font-size: 45px;
-    color: white;
+    #bet {
+        margin-top: 3px;
+    }
+
+    #results {
+        font-size: 45px;
+        color: white;
+    }
+
+    #chips-container {
+        bottom: 22%;
+        left: 30%;
+    }
+
+    .chip img {
+        width: 55px;
+    }
+
+
+    .chip-value {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 15px;
+    }
 }
 
 @media all and (max-width: 600px) {
     .btn {
         font-size: 10px;
         margin-left: 4px;
-    }
-
-    #bet {
-        width: 70px;
     }
 }
 

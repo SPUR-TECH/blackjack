@@ -16,32 +16,40 @@ window.onload = function () {
 	// Attach the handleDeal function to the Deal button
 	document.getElementById("deal").addEventListener("click", handleDeal);
 
-	// Listen for Enter key press event in the bet input field
-	document.getElementById("bet").addEventListener("keypress", function (event) {
-		if (event.key === "Enter") {
-			handleDeal();
-		}
-	});
+	// Add event listeners to chip images to handle adding bets
+	let chips = document.getElementsByClassName("chip");
+	for (let chip of chips) {
+		chip.addEventListener("click", function () {
+			let chipValue = parseFloat(chip.querySelector(".chip-value").innerText);
+			addChipBet(chipValue);
+		});
+	}
 };
 
+function addChipBet(chipValue) {
+	// Check if the player has enough money to place the bet
+	if (playerMoney < chipValue && playerMoney !== chipValue) {
+		alert("Insufficient funds. Please select a lower bet amount.");
+		return;
+	}
+
+	// Add chip value to the current bet amount
+	currentBet += chipValue;
+	playerMoney -= chipValue; // Deduct the bet amount from player's money
+
+	// Show the updated bet amount
+	document.getElementById("bet").innerText = "Bet: £" + currentBet;
+
+	// Update the display of player's money
+	updateMoneyDisplay();
+
+	// Enable the Deal button after a valid bet is added
+	document.getElementById("deal").disabled = false;
+}
+
 function handleDeal() {
-	if (playerMoney <= 0) {
-		alert("Out of cash. Please reload the game.");
-		return;
-	}
-
-	let betInput = document.getElementById("bet").value.trim();
-	let bet = parseFloat(betInput);
-
-	// Check if the parsed value is valid
-	if (isNaN(bet) || bet <= 0 || bet > playerMoney || betInput === "") {
-		alert("Please enter a valid bet.");
-		return;
-	}
-
-	// Check if the bet exceeds two decimal places
-	if ((bet * 100) % 1 !== 0) {
-		alert("Please enter a bet.");
+	if (currentBet === 0) {
+		alert("Please place a bet before dealing.");
 		return;
 	}
 
@@ -49,7 +57,7 @@ function handleDeal() {
 	document.getElementById("deal").disabled = true;
 
 	// Start the game after a valid bet is input and the Deal button is pressed
-	startGame(bet);
+	startGame(currentBet);
 }
 
 function updateMoneyDisplay() {
@@ -96,13 +104,9 @@ function startGame(bet) {
 	resetGame();
 
 	currentBet = bet; // Set the current bet amount
-	playerMoney -= bet; // Deduct the bet amount from player's money
-	updateMoneyDisplay(); // Update money display
+	updateMoneyDisplay(); // Update money display (don't deduct the bet amount again)
 
 	canHit = true; // Reset canHit to true
-
-	// Disable the Deal button at the start of the game
-	document.getElementById("deal").disabled = true;
 
 	// Clear the player and dealer hands
 	document.getElementById("player").innerHTML = "";
@@ -195,6 +199,7 @@ function determineOutcome() {
 	// Enable the Deal button only after the game outcome is determined
 	document.getElementById("deal").disabled = false;
 }
+
 function determineDealerAction() {
 	// Determine if the dealer should hit or stand based on their current total
 	if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
