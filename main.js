@@ -230,9 +230,20 @@ function dealerHit() {
 			dealerSum += getValue(card);
 			dealerAceCount += checkAce(card);
 			document.getElementById("dealer").append(cardImg);
-			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
+			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn and Ace is reduced if necessary
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
+			if (dealerSum > 21) {
+				// Check if the dealer busts after hitting
+				clearInterval(interval); // Stop drawing cards
+				// Show the player's score after the dealer busts
+				document.getElementById("player-score").style.display = "block";
+				// Show the dealer's score after the dealer busts
+				document.getElementById("dealer-score").style.display = "block";
+				// Determine the outcome of the game
+				determineOutcome();
+				document.getElementById("results").innerText = "DEALER BUST!!";
+			}
 		} else {
 			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
 			// Show the player's score after the dealer stands
@@ -241,10 +252,6 @@ function dealerHit() {
 			document.getElementById("dealer-score").style.display = "block";
 			// Determine the outcome of the game
 			determineOutcome();
-			// Check if dealer busts after the game outcome is determined
-			if (dealerSum > 21) {
-				document.getElementById("results").innerText = "DEALER BUST!!";
-			}
 		}
 	}, 1000); // Adjust the delay (in milliseconds) between drawing cards
 }
@@ -271,8 +278,10 @@ function hit() {
 	playerAceCount += checkAce(card);
 
 	// Check if the player's score exceeds 21 and adjust the value of Ace if necessary
-	if (playerSum > 21) {
+	if (playerSum > 21 && playerAceCount > 0) {
 		playerSum = reduceAce(playerSum, playerAceCount);
+		canHit = false;
+		endGame("YOU BUST!!");
 	}
 
 	document.getElementById("player").append(cardImg);
@@ -283,6 +292,9 @@ function hit() {
 	if (playerSum > 21) {
 		canHit = false;
 		endGame("YOU BUST!!");
+	} else if (playerSum === 21) {
+		// If player reaches 21, automatically stand
+		stand();
 	}
 }
 
@@ -347,12 +359,12 @@ function checkAce(card) {
 	return 0;
 }
 
-function reduceAce(playerSum, playerAceCount) {
-	while (playerSum > 21 && playerAceCount > 0) {
-		playerSum -= 10;
-		playerAceCount -= 1;
+function reduceAce(score, aceCount) {
+	while (score > 21 && aceCount > 0) {
+		score -= 10;
+		aceCount -= 1;
 	}
-	return playerSum;
+	return score;
 }
 
 function clearBet() {
