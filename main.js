@@ -7,6 +7,7 @@ var currentBet = 0;
 var hidden;
 var deck;
 var canHit = true;
+var isDealInitiated = false; // Flag to track whether deal has been initiated
 
 window.onload = function () {
 	updateMoneyDisplay();
@@ -23,8 +24,10 @@ window.onload = function () {
 	let chips = document.getElementsByClassName("chip");
 	for (let chip of chips) {
 		chip.addEventListener("click", function () {
-			let chipValue = parseFloat(chip.querySelector(".chip-value").innerText);
-			addChipBet(chipValue);
+			if (!isDealInitiated) {
+				let chipValue = parseFloat(chip.querySelector(".chip-value").innerText);
+				addChipBet(chipValue);
+			}
 		});
 	}
 };
@@ -61,6 +64,9 @@ function handleDeal() {
 
 	// Start the game after a valid bet is input and the Deal button is pressed
 	startGame(currentBet);
+
+	// Set the deal initiation flag to true
+	isDealInitiated = true;
 }
 
 function updateMoneyDisplay() {
@@ -136,8 +142,6 @@ function startGame(bet) {
 	// If the hidden card is not an Ace, add its value to dealerSum
 	dealerSum += getValue(hidden);
 	dealerAceCount += checkAce(hidden);
-
-	// document.getElementById("chips").removeEventListener("click", addChipBet);
 
 	// Deal the player's initial two cards
 	for (let i = 0; i < 2; i++) {
@@ -396,6 +400,9 @@ function resetGame() {
 
 	// Reset canHit to allow the player to hit again
 	canHit = true;
+
+	// Reset the deal initiation flag to allow adding chips on the next game
+	isDealInitiated = false;
 
 	// Reset the player's Ace count to 0 when the game is reset
 	playerAceCount = 0;
