@@ -4,6 +4,15 @@
     box-sizing: border-box;
 }
 
+body {
+    background-color: rgb(15, 66, 5);
+    user-select: none;
+}
+
+#wrapper {
+    margin: 0, auto;
+}
+
 #turn-phone-info {
     position: absolute;
     top: 50%;
@@ -24,14 +33,6 @@
 
 #bottom-arrow {
     margin-left: 120px;
-}
-
-body {
-    background-color: rgb(15, 66, 5);
-}
-
-#wrapper {
-    margin: 0, auto;
 }
 
 #game {

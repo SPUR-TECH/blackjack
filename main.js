@@ -16,6 +16,9 @@ window.onload = function () {
 	// Attach the handleDeal function to the Deal button
 	document.getElementById("deal").addEventListener("click", handleDeal);
 
+	// Add event listener for the "Hit" button outside the onload function
+	document.getElementById("hit").addEventListener("click", hit);
+
 	// Add event listeners to chip images to handle adding bets
 	let chips = document.getElementsByClassName("chip");
 	for (let chip of chips) {
@@ -101,8 +104,6 @@ function shuffleDeck() {
 }
 
 function startGame(bet) {
-	resetGame();
-
 	currentBet = bet; // Set the current bet amount
 	updateMoneyDisplay(); // Update money display (don't deduct the bet amount again)
 
@@ -163,6 +164,8 @@ function startGame(bet) {
 		// Update player's money instantly
 		playerMoney += 2.5 * currentBet; // Double the bet amount (original bet + win)
 		updateMoneyDisplay(); // Update the displayed money
+		// Call resetGame() after a delay
+		setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
 	}
 }
 
@@ -201,6 +204,9 @@ function determineOutcome() {
 
 	// Clear the current bet
 	clearBet();
+
+	// Call resetGame() after a delay
+	setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
 }
 
 function determineDealerAction() {
@@ -368,20 +374,19 @@ function resetGame() {
 	document.getElementById("dealer-score").style.display = "none";
 	document.getElementById("player-score").style.display = "none";
 
-	// Remove event listener for the "Stand" button
-	document.getElementById("stand").removeEventListener("click", stand);
-
-	// Add event listener for the "Stand" button
-	document.getElementById("stand").addEventListener("click", stand);
-
-	// Remove event listener for the "Hit" button
-	document.getElementById("hit").removeEventListener("click", hit);
+	// Disable Hit and Stand buttons
+	document.getElementById("hit").disabled = false;
+	document.getElementById("stand").disabled = false;
+	// Enable the Deal button
+	document.getElementById("deal").disabled = false;
 
 	// Reset canHit to allow the player to hit again
 	canHit = true;
 
 	// Reset the player's Ace count to 0 when the game is reset
 	playerAceCount = 0;
+
+	clearBet();
 }
 
 function endGame(message) {
@@ -391,4 +396,7 @@ function endGame(message) {
 	document.getElementById("stand").disabled = true;
 	// Enable the Deal button
 	document.getElementById("deal").disabled = false;
+
+	// Call resetGame() after a delay
+	setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
 }
