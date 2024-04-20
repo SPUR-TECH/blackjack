@@ -3,6 +3,8 @@ var dealerSum = 0;
 var playerSum = 0;
 var dealerAceCount = 0;
 var playerAceCount = 0;
+var splitAceCount1 = 0; // Ace count for the first split hand
+var splitAceCount2 = 0; // Ace count for the second split hand
 var currentBet = 0;
 var hidden;
 var deck;
@@ -19,6 +21,9 @@ window.onload = function () {
 
 	// Add event listener for the "Hit" button outside the onload function
 	document.getElementById("hit").addEventListener("click", hit);
+
+	// Add event listener for the "Stand" button outside the onload function
+	document.getElementById("stand").addEventListener("click", stand);
 
 	// Add event listeners to chip images to handle adding bets
 	let chips = document.getElementsByClassName("chip");
@@ -67,6 +72,100 @@ function handleDeal() {
 
 	// Set the deal initiation flag to true
 	isDealInitiated = true;
+
+	// Check if the player's first two cards are eligible for splitting
+	if (canSplit()) {
+		// Enable the Split button for the player
+		document.getElementById("split").disabled = false;
+		document.getElementById("split").addEventListener("click", split);
+	}
+}
+
+function canSplit() {
+	// Get the player's first two cards
+	let firstCard = document.getElementById("player").childNodes[0].src;
+	let secondCard = document.getElementById("player").childNodes[1].src;
+
+	// Extract the values from the card image URLs
+	let firstValue = firstCard.split("/").pop().split("-")[0];
+	let secondValue = secondCard.split("/").pop().split("-")[0];
+
+	// Check if the values are the same
+	return firstValue === secondValue;
+}
+
+function split() {
+	// Remove event listener for the Split button
+	document.getElementById("split").removeEventListener("click", split);
+
+	// Remove the Split button
+	document.getElementById("split").disabled = true;
+
+	// Create two separate hands for the player
+	let firstCard = document.getElementById("player").childNodes[0];
+	let secondCard = document.getElementById("player").childNodes[1];
+
+	// Remove the first two cards from the player's hand
+	document.getElementById("player").removeChild(firstCard);
+	document.getElementById("player").removeChild(secondCard);
+
+	// Create two separate divs for the hands
+	let hand1 = document.createElement("div");
+	let hand2 = document.createElement("div");
+
+	// Set the style for the hands to display them side by side
+	hand1.style.display = "inline-block";
+	hand2.style.display = "inline-block";
+
+	// Set the width of each hand to ensure they fit side by side
+	hand1.style.width = "50%";
+	hand2.style.width = "50%";
+
+	// Add the first card to the first hand
+	hand1.appendChild(firstCard);
+
+	// Add the second card to the second hand
+	hand2.appendChild(secondCard);
+
+	// Append the hands to the player's section
+	document.getElementById("player").appendChild(hand1);
+	document.getElementById("player").appendChild(hand2);
+
+	// Deal one card to each hand
+	dealCard(hand1);
+	dealCard(hand2);
+}
+
+function dealCard(hand) {
+	// Check if the deck is empty
+	if (deck.length === 0) {
+		// Shuffle the used cards back into the deck
+		shuffleDeck();
+		alert("The deck has been reshuffled.");
+	}
+
+	// Deal one card from the deck to the specified hand
+	let cardImg = document.createElement("img");
+	let card = deck.pop();
+	cardImg.src = "./img/" + card + ".png";
+
+	// Update the player's sum based on the dealt card
+	if (hand.id === "player") {
+		playerSum += getValue(card);
+		playerAceCount += checkAce(card);
+	} else if (hand.id === "hand1") {
+		splitSum1 += getValue(card);
+		splitAceCount1 += checkAce(card);
+	} else if (hand.id === "hand2") {
+		splitSum2 += getValue(card);
+		splitAceCount2 += checkAce(card);
+	}
+
+	// Append the card to the specified hand
+	hand.appendChild(cardImg);
+
+	// Update player's score display
+	document.getElementById("player-score").innerText = playerSum;
 }
 
 function updateMoneyDisplay() {
@@ -123,7 +222,7 @@ function startGame(bet) {
 	dealerAceCount = 0;
 	playerAceCount = 0;
 
-	// Deal the hidden card for the dealer
+	// Deal the hidden card for the dealer on every first deal
 	hidden = deck.pop(); // Assign a random card from the deck to the hidden variable
 	let dealerHiddenCardImg = document.createElement("img");
 	dealerHiddenCardImg.src = "./img/back.png"; // Display the back side image for the hidden card
@@ -216,8 +315,11 @@ function determineOutcome() {
 }
 
 function determineDealerAction() {
-	// Determine if the dealer should hit or stand based on their current total
-	if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
+	// Check if dealer has reached 21
+	if (dealerSum === 21 && dealerAceCount > 0) {
+		// Dealer has reached 21 with an ace, no further action needed
+		dealerStand();
+	} else if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
 		// If dealer's total is less than 17 or dealer has a soft 17, they must hit
 		dealerHit();
 	} else {
@@ -241,14 +343,18 @@ function dealerHit() {
 			document.getElementById("dealer-score").innerText = dealerSum;
 			if (dealerSum > 21) {
 				// Check if the dealer busts after hitting
-				clearInterval(interval); // Stop drawing cards
-				// Show the player's score after the dealer busts
-				document.getElementById("player-score").style.display = "block";
-				// Show the dealer's score after the dealer busts
-				document.getElementById("dealer-score").style.display = "block";
-				// Determine the outcome of the game
-				determineOutcome();
-				document.getElementById("results").innerText = "DEALER BUST!!";
+				dealerSum = reduceAce(dealerSum, dealerAceCount); // Attempt to reduce Ace value to prevent busting
+				dealerAceCount -= 1; // Decrement the dealer's Ace count since one Ace has been reduced
+				if (dealerSum > 21) {
+					clearInterval(interval); // Stop drawing cards
+					// Show the player's score after the dealer busts
+					document.getElementById("player-score").style.display = "block";
+					// Show the dealer's score after the dealer busts
+					document.getElementById("dealer-score").style.display = "block";
+					// Determine the outcome of the game
+					determineOutcome();
+					document.getElementById("results").innerText = "DEALER BUST!!";
+				}
 			}
 		} else {
 			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
@@ -286,8 +392,7 @@ function hit() {
 	// Check if the player's score exceeds 21 and adjust the value of Ace if necessary
 	if (playerSum > 21 && playerAceCount > 0) {
 		playerSum = reduceAce(playerSum, playerAceCount);
-		canHit = false;
-		endGame("YOU BUST!!");
+		playerAceCount -= 1; // Decrement the player's Ace count since one Ace has been reduced
 	}
 
 	document.getElementById("player").append(cardImg);
@@ -350,8 +455,9 @@ function getValue(card) {
 
 	if (isNaN(value)) {
 		//"J","Q","K"
-		if (value == "A") {
-			return 11;
+		if (value === "A") {
+			// Check if adding 11 would cause the player to bust
+			return playerSum + 11 > 21 ? 1 : 11;
 		}
 		return 10;
 	}
@@ -379,7 +485,32 @@ function clearBet() {
 }
 
 function resetGame() {
-	// Remove old score and message
+	// Return cards to the deck
+	for (
+		let i = 0;
+		i < document.getElementById("player").childNodes.length;
+		i++
+	) {
+		let card = document
+			.getElementById("player")
+			.childNodes[i].src.split("/")
+			.pop()
+			.split(".")[0];
+		deck.push(card);
+	}
+	for (
+		let i = 0;
+		i < document.getElementById("dealer").childNodes.length;
+		i++
+	) {
+		let card = document
+			.getElementById("dealer")
+			.childNodes[i].src.split("/")
+			.pop()
+			.split(".")[0];
+		deck.push(card);
+	}
+	// Clear old score and message
 	document.getElementById("results").innerText = "";
 	document.getElementById("dealer-score").innerText = "";
 	document.getElementById("player-score").innerText = "";
@@ -406,6 +537,9 @@ function resetGame() {
 
 	// Reset the player's Ace count to 0 when the game is reset
 	playerAceCount = 0;
+
+	// Shuffle the deck again
+	shuffleDeck();
 
 	clearBet();
 }
