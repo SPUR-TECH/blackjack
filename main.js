@@ -32,7 +32,7 @@ window.onload = function () {
 function addChipBet(chipValue) {
 	// Check if the player has enough money to place the bet
 	if (playerMoney < chipValue && playerMoney !== chipValue) {
-		alert("Insufficient funds. Please select a lower bet amount.");
+		alert("Insufficient funds.");
 		return;
 	}
 
@@ -137,6 +137,8 @@ function startGame(bet) {
 	dealerSum += getValue(hidden);
 	dealerAceCount += checkAce(hidden);
 
+	// document.getElementById("chips").removeEventListener("click", addChipBet);
+
 	// Deal the player's initial two cards
 	for (let i = 0; i < 2; i++) {
 		let cardImg = document.createElement("img");
@@ -161,7 +163,7 @@ function startGame(bet) {
 		document.getElementById("player").childNodes.length === 2
 	) {
 		document.getElementById("results").innerText = "BLACKJACK!!";
-		// Update player's money instantly
+		// Update player's blackjack win instantly
 		playerMoney += 2.5 * currentBet; // Double the bet amount (original bet + win)
 		updateMoneyDisplay(); // Update the displayed money
 		// Call resetGame() after a delay
@@ -403,9 +405,11 @@ function resetGame() {
 
 function endGame(message) {
 	document.getElementById("results").innerText = message;
+
 	// Disable Hit and Stand buttons
 	document.getElementById("hit").disabled = true;
 	document.getElementById("stand").disabled = true;
+
 	// Enable the Deal button
 	document.getElementById("deal").disabled = false;
 
