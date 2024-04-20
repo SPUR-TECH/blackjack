@@ -3,13 +3,14 @@ var dealerSum = 0;
 var playerSum = 0;
 var dealerAceCount = 0;
 var playerAceCount = 0;
-var splitAceCount1 = 0; // Ace count for the first split hand
-var splitAceCount2 = 0; // Ace count for the second split hand
+// var splitAceCount1 = 0; // Ace count for the first split hand
+// var splitAceCount2 = 0; // Ace count for the second split hand
 var currentBet = 0;
 var hidden;
 var deck;
 var canHit = true;
 var isDealInitiated = false; // Flag to track whether deal has been initiated
+var hasDoubled = false; // Flag to track if the player has already doubled in the current game
 
 window.onload = function () {
 	updateMoneyDisplay();
@@ -21,6 +22,11 @@ window.onload = function () {
 
 	// Add event listener for the "Hit" button outside the onload function
 	document.getElementById("hit").addEventListener("click", hit);
+
+	// Add event listener for the "Double" button
+	document.getElementById("double").addEventListener("click", double);
+	// Initially disable the Double button
+	document.getElementById("double").disabled = true;
 
 	// Add event listener for the "Stand" button outside the onload function
 	document.getElementById("stand").addEventListener("click", stand);
@@ -58,6 +64,47 @@ function addChipBet(chipValue) {
 	document.getElementById("deal").disabled = false;
 }
 
+function double() {
+	// Check if the player has already doubled in the current game
+	if (hasDoubled) {
+		alert("You can only double once per game.");
+		return;
+	}
+
+	// Double the current bet
+	let doubleBet = currentBet * 2;
+
+	// Check if the player has enough money to double the bet
+	if (playerMoney < doubleBet) {
+		alert("Insufficient funds to double the bet.");
+		return;
+	}
+
+	// Set the flag to true to indicate that the player has doubled
+	hasDoubled = true;
+
+	// Add the double bet amount to the current bet
+	currentBet += doubleBet;
+
+	// Deduct the double bet amount from player's money
+	playerMoney -= doubleBet;
+
+	// Show the updated bet amount
+	document.getElementById("bet").innerText = "Bet: £" + currentBet;
+
+	// Update the display of player's money
+	updateMoneyDisplay();
+
+	// Deal one additional card to the player
+	dealCard(document.getElementById("player"));
+
+	// Automatically stand after doubling
+	stand();
+
+	// Disable the "Double" button after doubling
+	document.getElementById("double").disabled = true;
+}
+
 function handleDeal() {
 	if (currentBet === 0) {
 		alert("Please place a bet before dealing.");
@@ -67,6 +114,9 @@ function handleDeal() {
 	// Disable the Deal button to prevent multiple deals
 	document.getElementById("deal").disabled = true;
 
+	// Enable the Double button after dealing cards
+	document.getElementById("double").disabled = false;
+
 	// Start the game after a valid bet is input and the Deal button is pressed
 	startGame(currentBet);
 
@@ -74,67 +124,72 @@ function handleDeal() {
 	isDealInitiated = true;
 
 	// Check if the player's first two cards are eligible for splitting
-	if (canSplit()) {
-		// Enable the Split button for the player
-		document.getElementById("split").disabled = false;
-		document.getElementById("split").addEventListener("click", split);
-	}
+	// if (canSplit()) {
+	// 	// Enable the Split button for the player
+	// 	document.getElementById("split").disabled = false;
+	// 	document.getElementById("split").addEventListener("click", split);
+	// }
 }
 
-function canSplit() {
-	// Get the player's first two cards
-	let firstCard = document.getElementById("player").childNodes[0].src;
-	let secondCard = document.getElementById("player").childNodes[1].src;
+// function canSplit() {
+// 	// Get the player's first two cards
+// 	let firstCard = document.getElementById("player").childNodes[0].src;
+// 	let secondCard = document.getElementById("player").childNodes[1].src;
 
-	// Extract the values from the card image URLs
-	let firstValue = firstCard.split("/").pop().split("-")[0];
-	let secondValue = secondCard.split("/").pop().split("-")[0];
+// 	// Extract the values from the card image URLs
+// 	let firstValue = firstCard.split("/").pop().split("-")[0];
+// 	let secondValue = secondCard.split("/").pop().split("-")[0];
 
-	// Check if the values are the same
-	return firstValue === secondValue;
-}
+// 	// Check if the values are the same
+// 	return firstValue === secondValue;
+// }
 
-function split() {
-	// Remove event listener for the Split button
-	document.getElementById("split").removeEventListener("click", split);
+// function split() {
+// 	// Remove event listener for the Split button
+// 	document.getElementById("split").removeEventListener("click", split);
 
-	// Remove the Split button
-	document.getElementById("split").disabled = true;
+// 	// Remove the Split button
+// 	document.getElementById("split").disabled = true;
 
-	// Create two separate hands for the player
-	let firstCard = document.getElementById("player").childNodes[0];
-	let secondCard = document.getElementById("player").childNodes[1];
+// 	// Create two separate hands for the player
+// 	let firstCard = document.getElementById("player").childNodes[0];
+// 	let secondCard = document.getElementById("player").childNodes[1];
 
-	// Remove the first two cards from the player's hand
-	document.getElementById("player").removeChild(firstCard);
-	document.getElementById("player").removeChild(secondCard);
+// 	// Remove the first two cards from the player's hand
+// 	document.getElementById("player").removeChild(firstCard);
+// 	document.getElementById("player").removeChild(secondCard);
 
-	// Create two separate divs for the hands
-	let hand1 = document.createElement("div");
-	let hand2 = document.createElement("div");
+// 	// Create two separate divs for the hands
+// 	let hand1 = document.createElement("div");
+// 	let hand2 = document.createElement("div");
 
-	// Set the style for the hands to display them side by side
-	hand1.style.display = "inline-block";
-	hand2.style.display = "inline-block";
+// 	// Set the style for the hands to display them side by side
+// 	hand1.style.display = "inline-block";
+// 	hand2.style.display = "inline-block";
 
-	// Set the width of each hand to ensure they fit side by side
-	hand1.style.width = "50%";
-	hand2.style.width = "50%";
+// 	// Set the width of each hand to ensure they fit side by side
+// 	hand1.style.width = "50%";
+// 	hand2.style.width = "50%";
 
-	// Add the first card to the first hand
-	hand1.appendChild(firstCard);
+// 	// Add the first card to the first hand
+// 	hand1.appendChild(firstCard);
 
-	// Add the second card to the second hand
-	hand2.appendChild(secondCard);
+// 	// Add a random card to the second hand
+// 	let cardImg = document.createElement("img");
+// 	let card = deck.pop();
+// 	cardImg.src = "./img/" + card + ".png";
+// 	playerSum += getValue(card);
+// 	playerAceCount += checkAce(card);
+// 	hand2.appendChild(cardImg);
 
-	// Append the hands to the player's section
-	document.getElementById("player").appendChild(hand1);
-	document.getElementById("player").appendChild(hand2);
+// 	// Append the hands to the player's section
+// 	document.getElementById("player").appendChild(hand1);
+// 	document.getElementById("player").appendChild(hand2);
 
-	// Deal one card to each hand
-	dealCard(hand1);
-	dealCard(hand2);
-}
+// 	// Deal one card to each hand
+// 	dealCard(hand1);
+// 	dealCard(hand2);
+// }
 
 function dealCard(hand) {
 	// Check if the deck is empty
@@ -153,12 +208,12 @@ function dealCard(hand) {
 	if (hand.id === "player") {
 		playerSum += getValue(card);
 		playerAceCount += checkAce(card);
-	} else if (hand.id === "hand1") {
-		splitSum1 += getValue(card);
-		splitAceCount1 += checkAce(card);
-	} else if (hand.id === "hand2") {
-		splitSum2 += getValue(card);
-		splitAceCount2 += checkAce(card);
+		// } else if (hand.id === "hand1") {
+		// 	splitSum1 += getValue(card);
+		// 	splitAceCount1 += checkAce(card);
+		// } else if (hand.id === "hand2") {
+		// 	splitSum2 += getValue(card);
+		// 	splitAceCount2 += checkAce(card);
 	}
 
 	// Append the card to the specified hand
@@ -214,12 +269,15 @@ function startGame(bet) {
 
 	canHit = true; // Reset canHit to true
 
+	// Reset the hasDoubled flag
+	hasDoubled = false;
+
 	// Clear the player and dealer hands
 	document.getElementById("player").innerHTML = "";
 	document.getElementById("dealer").innerHTML = "";
 	dealerSum = 0;
 	playerSum = 0;
-	dealerAceCount = 0;
+	dealerAceCount = 0; // Reset dealerAceCount
 	playerAceCount = 0;
 
 	// Deal the hidden card for the dealer on every first deal
@@ -236,7 +294,7 @@ function startGame(bet) {
 	dealerVisibleCardImg.alt = "Dealer Card";
 	document.getElementById("dealer").appendChild(dealerVisibleCardImg);
 	dealerSum += getValue(card2); // Add the value of the second card to dealerSum
-	dealerAceCount += checkAce(card2);
+	dealerAceCount += checkAce(card2); // Increment dealerAceCount if second card is an ace
 
 	// If the hidden card is not an Ace, add its value to dealerSum
 	dealerSum += getValue(hidden);
@@ -260,6 +318,9 @@ function startGame(bet) {
 	document.getElementById("hit").addEventListener("click", hit);
 	document.getElementById("stand").addEventListener("click", stand);
 
+	// Disable "Double" button before dealing cards
+	document.getElementById("double").disabled = true;
+
 	// Check for BLACKJACK!!
 	if (
 		playerSum === 21 &&
@@ -271,6 +332,11 @@ function startGame(bet) {
 		updateMoneyDisplay(); // Update the displayed money
 		// Call resetGame() after a delay
 		setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
+	}
+
+	// Enable "Double" button after dealing cards if conditions are met
+	if (playerMoney >= bet * 2) {
+		document.getElementById("double").disabled = false;
 	}
 }
 
@@ -526,6 +592,10 @@ function resetGame() {
 	// Disable Hit and Stand buttons
 	document.getElementById("hit").disabled = false;
 	document.getElementById("stand").disabled = false;
+
+	// Disable before deal
+	document.getElementById("double").disabled = true;
+
 	// Enable the Deal button
 	document.getElementById("deal").disabled = false;
 

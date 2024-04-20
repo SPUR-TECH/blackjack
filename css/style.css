@@ -43,6 +43,7 @@ body {
     width: 100%;
     position: relative;
     text-align: center;
+    overflow: hidden;
 }
 
 #money {
@@ -61,6 +62,20 @@ body {
     color: white;
     margin-left: -100px;
 }
+
+#scores {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.score {
+    width: 50%;
+    text-align: center;
+    padding: 5px;
+    padding-right: 2px;
+}
+
 
 #dealer {
     display: block;
@@ -102,22 +117,23 @@ body {
 
 #player img {
     width: 8%;
-    margin-top: 8%;
+    margin-top: 7%;
     border-radius: 5px;
     margin-left: 2px;
 }
 
-#split-hand {
+/* #split-hand {
     display: flex;
     align-items: center;
     justify-content: center;
+    display: none;
 }
 
 #split-player img {
     width: 20%;
     height: auto;
     margin-right: 5px;
-}
+} */
 
 #player-score {
     position: absolute;
@@ -125,8 +141,6 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%);
-    padding: 10px;
-    /* padding-bottom: 2px; */
     background-color: black;
     width: auto;
     border-radius: 5px;
