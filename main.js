@@ -62,53 +62,51 @@ function addChipBet(chipValue) {
 
 	// Enable the Deal button after a valid bet is added
 	document.getElementById("deal").disabled = false;
+
+	// Log the current bet and player's money to the console
+	console.log("Player money:", playerMoney);
+	console.log("Current bet:", currentBet);
 }
 
 function double() {
-	// Check if the player has already hit
-	if (playerSum === 0) {
-		alert("You cannot double after hitting.");
-		return;
-	}
-
-	// Check if the player has already doubled in the current game
-	if (hasDoubled) {
-		alert("You can only double once per game.");
-		return;
-	}
-
-	// Double the current bet
+	// Calculate the double bet amount
 	let doubleBet = currentBet;
 
+	console.log("Player money before doubling:", playerMoney);
+	console.log("Current bet before doubling:", currentBet);
+	console.log("Double bet amount:", doubleBet);
+
 	// Check if the player has enough money to double the bet
-	if (playerMoney < doubleBet) {
+	if (playerMoney >= currentBet) {
+		// Deduct the original bet amount from player's money
+		playerMoney -= currentBet;
+
+		// Show the updated bet amount
+		document.getElementById("bet").innerText = "Bet: £" + currentBet;
+
+		// Update the display of player's money
+		updateMoneyDisplay();
+
+		// Set the flag to true to indicate that the player has doubled
+		hasDoubled = true;
+
+		// Deal one additional card to the player
+		dealCard(document.getElementById("player"));
+
+		// Automatically stand after doubling
+		stand();
+
+		// Disable the "Double" button after doubling
+		document.getElementById("double").disabled = true;
+
+		console.log("Player money after doubling:", playerMoney);
+		console.log("Current bet after doubling:", currentBet);
+		console.log("Condition result:", true);
+	} else {
+		// Alert the player about insufficient funds to double the bet
 		alert("Insufficient funds to double the bet.");
-		return;
+		console.log("Condition result:", false);
 	}
-
-	// Set the flag to true to indicate that the player has doubled
-	hasDoubled = true;
-
-	// Add the double bet amount to the current bet
-	currentBet += doubleBet;
-
-	// Deduct the double bet amount from player's money
-	playerMoney -= doubleBet;
-
-	// Show the updated bet amount
-	document.getElementById("bet").innerText = "Bet: £" + currentBet;
-
-	// Update the display of player's money
-	updateMoneyDisplay();
-
-	// Deal one additional card to the player
-	dealCard(document.getElementById("player"));
-
-	// Automatically stand after doubling
-	stand();
-
-	// Disable the "Double" button after doubling
-	document.getElementById("double").disabled = true;
 }
 
 function handleDeal() {
@@ -346,7 +344,7 @@ function startGame(bet) {
 	}
 
 	// Enable "Double" button after dealing cards if conditions are met
-	if (playerMoney >= bet * 2) {
+	if (playerMoney >= bet) {
 		document.getElementById("double").disabled = false;
 	}
 }
