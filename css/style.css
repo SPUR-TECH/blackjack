@@ -69,14 +69,25 @@ body {
     border: 2px solid rgb(255, 196, 0);
     padding: 10px;
     color: rgb(0, 255, 242);
-    position: absolute;
+    font-size: 20px;
+    position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 42%;
     display: none;
+    animation: pulsate 1s infinite alternate;
 }
 
-#scores {
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+With t #scores {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
@@ -308,6 +319,10 @@ body {
         font-size: 15px;
     }
 
+    #results {
+        font-size: 30px;
+    }
+
     #player img {
         border-radius: 3px;
         width: 50px;
@@ -333,8 +348,8 @@ body {
         margin-top: 3px;
     }
 
-    #results {
-        font-size: 30px;
+    #reset-money {
+        left: 35%;
     }
 
     #chips-container {
@@ -363,7 +378,6 @@ body {
         margin-bottom: -10px;
         border-radius: 3px;
     }
-
 
     #player img {
         margin-top: 10px;
