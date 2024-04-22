@@ -75,6 +75,14 @@ body {
     left: 42%;
     display: none;
     animation: pulsate 1s infinite alternate;
+    -webkit-animation: pulsate 1s infinite alternate;
+    /* Safari and Chrome */
+    -moz-animation: pulsate 1s infinite alternate;
+    /* Firefox */
+    -o-animation: pulsate 1s infinite alternate;
+    /* Opera */
+    -ms-animation: pulsate 1s infinite alternate;
+    /* Internet Explorer */
 }
 
 @keyframes pulsate {
