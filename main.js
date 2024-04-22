@@ -3,8 +3,8 @@ var dealerSum = 0;
 var playerSum = 0;
 var dealerAceCount = 0;
 var playerAceCount = 0;
-// var splitAceCount1 = 0; // Ace count for the first split hand
-// var splitAceCount2 = 0; // Ace count for the second split hand
+var splitAceCount1 = 0; // Ace count for the first split hand
+var splitAceCount2 = 0; // Ace count for the second split hand
 var currentBet = 0;
 var hidden;
 var deck;
@@ -72,7 +72,7 @@ function double() {
 	}
 
 	// Double the current bet
-	let doubleBet = currentBet * 2;
+	let doubleBet = currentBet;
 
 	// Check if the player has enough money to double the bet
 	if (playerMoney < doubleBet) {
@@ -396,32 +396,25 @@ function determineDealerAction() {
 
 function dealerHit() {
 	let interval = setInterval(function () {
-		if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
-			// Dealer must hit if total is less than 17 or dealer has a soft 17
+		if (dealerSum < 17) {
 			let cardImg = document.createElement("img");
 			let card = deck.pop();
 			cardImg.src = "./img/" + card + ".png";
 			dealerSum += getValue(card);
 			dealerAceCount += checkAce(card);
 			document.getElementById("dealer").append(cardImg);
-			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn and Ace is reduced if necessary
+			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
-			if (dealerSum > 21) {
-				// Check if the dealer busts after hitting
-				dealerSum = reduceAce(dealerSum, dealerAceCount); // Attempt to reduce Ace value to prevent busting
-				dealerAceCount -= 1; // Decrement the dealer's Ace count since one Ace has been reduced
-				if (dealerSum > 21) {
-					clearInterval(interval); // Stop drawing cards
-					// Show the player's score after the dealer busts
-					document.getElementById("player-score").style.display = "block";
-					// Show the dealer's score after the dealer busts
-					document.getElementById("dealer-score").style.display = "block";
-					// Determine the outcome of the game
-					determineOutcome();
-					document.getElementById("results").innerText = "DEALER BUST!!";
-				}
-			}
+		} else if (dealerSum > 21) {
+			clearInterval(interval); // Stop drawing cards if the dealer has busted
+			// Show the player's score after the dealer busts
+			document.getElementById("player-score").style.display = "block";
+			// Show the dealer's score after the dealer busts
+			document.getElementById("dealer-score").style.display = "block";
+			// Determine the outcome of the game
+			determineOutcome();
+			document.getElementById("results").innerText = "DEALER BUST!!";
 		} else {
 			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
 			// Show the player's score after the dealer stands
