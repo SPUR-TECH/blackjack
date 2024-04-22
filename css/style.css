@@ -344,7 +344,8 @@ body {
 
 @media all and (max-width: 750px) {
     #player img {
-        margin-top: 50px;
+        margin-top: 30px;
+        width: 60px;
     }
 }
 
