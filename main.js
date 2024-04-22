@@ -41,7 +41,43 @@ window.onload = function () {
 			}
 		});
 	}
+
+	// Add a button click event listener to enter fullscreen mode
+	document
+		.getElementById("fullscreen-btn")
+		.addEventListener("click", function () {
+			enterFullscreen();
+		});
+
+	// Listen for fullscreen change events
+	document.addEventListener("fullscreenchange", handleFullscreenChange);
 };
+
+function enterFullscreen() {
+	// Check if the document supports fullscreen mode
+	if (document.fullscreenEnabled) {
+		// Request fullscreen mode
+		document.documentElement
+			.requestFullscreen()
+			.then(function () {
+				console.log("Entered fullscreen mode.");
+			})
+			.catch(function (error) {
+				console.error("Error entering fullscreen mode:", error);
+			});
+	} else {
+		console.error("Fullscreen mode is not supported in this browser.");
+	}
+}
+
+function handleFullscreenChange() {
+	// Check if currently in fullscreen mode
+	let isInFullscreen = document.fullscreenElement !== null;
+
+	// Hide or show the fullscreen button based on fullscreen state
+	let fullscreenBtn = document.getElementById("fullscreen-btn");
+	fullscreenBtn.style.display = isInFullscreen ? "none" : "block";
+}
 
 function addChipBet(chipValue) {
 	// Check if the player has enough money to place the bet

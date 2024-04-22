@@ -35,12 +35,20 @@ body {
     margin-left: 120px;
 }
 
+#fullscreen-btn {
+    padding: 5px;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    border: 2px solid rgb(255, 196, 0);
+}
+
 #game {
     background: transparent url("../img/blackjack-table.jpg") 0 0 no-repeat;
     background-position: center;
     background-size: contain;
     height: 100vh;
-    width: 100%;
+    max-width: 100%;
     position: relative;
     text-align: center;
     overflow: hidden;
