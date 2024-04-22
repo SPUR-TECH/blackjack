@@ -65,6 +65,12 @@ function addChipBet(chipValue) {
 }
 
 function double() {
+	// Check if the player has already hit
+	if (playerSum === 0) {
+		alert("You cannot double after hitting.");
+		return;
+	}
+
 	// Check if the player has already doubled in the current game
 	if (hasDoubled) {
 		alert("You can only double once per game.");
@@ -116,6 +122,11 @@ function handleDeal() {
 
 	// Enable the Double button after dealing cards
 	document.getElementById("double").disabled = false;
+
+	// Deal the player's initial two visible cards
+	for (let i = 0; i < 2; i++) {
+		dealCard(document.getElementById("player"));
+	}
 
 	// Start the game after a valid bet is input and the Deal button is pressed
 	startGame(currentBet);
@@ -466,6 +477,9 @@ function hit() {
 		// If player reaches 21, automatically stand
 		stand();
 	}
+
+	// Disable the "Double" button after hitting
+	document.getElementById("double").disabled = true;
 }
 
 function stand() {
