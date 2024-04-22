@@ -357,8 +357,16 @@ body {
 }
 
 @media all and (max-width: 750px) {
+
+    #dealer img {
+        margin-top: 40px;
+        margin-bottom: -10px;
+        border-radius: 3px;
+    }
+
+
     #player img {
-        margin-top: 30px;
+        margin-top: 10px;
     }
 }
 
