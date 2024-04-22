@@ -63,6 +63,19 @@ body {
     margin-left: -100px;
 }
 
+#reset-money {
+    background-color: black;
+    border-radius: 5px;
+    border: 2px solid rgb(255, 196, 0);
+    padding: 10px;
+    color: rgb(0, 255, 242);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
 #scores {
     display: flex;
     justify-content: space-between;

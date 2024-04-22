@@ -62,19 +62,11 @@ function addChipBet(chipValue) {
 
 	// Enable the Deal button after a valid bet is added
 	document.getElementById("deal").disabled = false;
-
-	// Log the current bet and player's money to the console
-	console.log("Player money:", playerMoney);
-	console.log("Current bet:", currentBet);
 }
 
 function double() {
 	// Calculate the double bet amount
 	let doubleBet = currentBet;
-
-	console.log("Player money before doubling:", playerMoney);
-	console.log("Current bet before doubling:", currentBet);
-	console.log("Double bet amount:", doubleBet);
 
 	// Check if the player has enough money to double the bet
 	if (playerMoney >= currentBet) {
@@ -98,14 +90,9 @@ function double() {
 
 		// Disable the "Double" button after doubling
 		document.getElementById("double").disabled = true;
-
-		console.log("Player money after doubling:", playerMoney);
-		console.log("Current bet after doubling:", currentBet);
-		console.log("Condition result:", true);
 	} else {
 		// Alert the player about insufficient funds to double the bet
 		alert("Insufficient funds to double the bet.");
-		console.log("Condition result:", false);
 	}
 }
 
@@ -233,7 +220,25 @@ function dealCard(hand) {
 }
 
 function updateMoneyDisplay() {
-	document.getElementById("cash").innerText = "Cash: £" + playerMoney; // Update money display
+	let cashDisplay = document.getElementById("cash");
+	cashDisplay.innerText = "Cash: £" + playerMoney; // Update money display
+
+	// Check if player's money is 0 and last game has been played
+	if (playerMoney === 0 && currentBet === 0) {
+		// Show the "Reset Money" button
+		document.getElementById("reset-money").style.display = "block";
+	} else {
+		// Hide the "Reset Money" button
+		document.getElementById("reset-money").style.display = "none";
+	}
+}
+
+function resetMoney() {
+	// Reset player's money to 1000
+	playerMoney = 1000;
+
+	// Update money display
+	updateMoneyDisplay();
 }
 
 function buildDeck() {
@@ -347,6 +352,9 @@ function startGame(bet) {
 	if (playerMoney >= bet) {
 		document.getElementById("double").disabled = false;
 	}
+
+	// Set the deal initiation flag to true
+	isDealInitiated = true; // Set isDealInitiated to true after dealing cards
 }
 
 function determineOutcome() {
@@ -369,7 +377,6 @@ function determineOutcome() {
 	}
 
 	playerMoney += winnings; // Update player's money
-	updateMoneyDisplay(); // Update the displayed money
 
 	document.getElementById("results").innerText = message;
 
@@ -379,11 +386,19 @@ function determineOutcome() {
 	document.getElementById("player-score").style.display = "block";
 	document.getElementById("dealer-score").style.display = "block";
 
-	// Enable the Deal button only after the game outcome is determined
-	document.getElementById("deal").disabled = false;
-
 	// Clear the current bet
 	clearBet();
+
+	// Check if player's money is zero and show the "Reset Money" button
+	if (playerMoney === 0) {
+		document.getElementById("reset-money").style.display = "block";
+	}
+
+	// Update money display after determining the outcome
+	updateMoneyDisplay();
+
+	// Enable the Deal button only after the game outcome is determined
+	document.getElementById("deal").disabled = false;
 
 	// Call resetGame() after a delay
 	setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
@@ -553,6 +568,9 @@ function reduceAce(score, aceCount) {
 function clearBet() {
 	currentBet = 0;
 	document.getElementById("bet").innerText = "Bet: £" + currentBet;
+
+	// Update the money display after clearing the bet
+	updateMoneyDisplay();
 }
 
 function resetGame() {
@@ -617,6 +635,9 @@ function resetGame() {
 	shuffleDeck();
 
 	clearBet();
+
+	// Update money display after resetting the game
+	updateMoneyDisplay();
 }
 
 function endGame(message) {
