@@ -36,6 +36,9 @@ window.onload = function () {
 	buildDeck();
 	shuffleDeck();
 
+	// Add event listener for the "Cancel Bet" button
+	document.getElementById("cancel-bet").addEventListener("click", cancelBet);
+
 	// Attach the handleDeal function to the Deal button
 	document.getElementById("deal").addEventListener("click", handleDeal);
 
@@ -98,6 +101,28 @@ function handleFullscreenChange() {
 	// Hide or show the fullscreen button based on fullscreen state
 	let fullscreenBtn = document.getElementById("fullscreen-btn");
 	fullscreenBtn.style.display = isInFullscreen ? "none" : "block";
+}
+
+// Function to handle canceling the current bet
+function cancelBet() {
+	// Check if the deal hasn't been initiated yet
+	if (currentBet > 0 && !isDealInitiated) {
+		document.getElementById("cancel-bet").style = "display-block";
+		// Add the current bet amount back to player's money
+		playerMoney += currentBet;
+
+		// Reset the current bet amount to 0
+		currentBet = 0;
+
+		// Update the display of player's money and bet amount
+		updateMoneyDisplay();
+		document.getElementById("bet").innerText = "Bet: £" + currentBet;
+
+		// Disable the Deal button since there's no bet
+		document.getElementById("deal").disabled = true;
+	} else {
+		showMessage("You can't cancel your bet after dealing.");
+	}
 }
 
 // Function to handle adding chip bet

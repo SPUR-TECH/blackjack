@@ -122,7 +122,7 @@ body {
     }
 }
 
-With t #scores {
+#scores {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
@@ -212,7 +212,7 @@ With t #scores {
 
 #actions {
     position: absolute;
-    bottom: 10%;
+    bottom: 5%;
     left: 50%;
     transform: translate(-50%);
     padding: 5px;
@@ -258,8 +258,21 @@ With t #scores {
     background-color: rgb(199, 0, 0);
 }
 
-#bet {
+#cancel-bet {
+    padding: 3px;
+    color: white;
+    background-color: rgb(53, 0, 88);
+    margin-right: 10px;
+    /* display: none; */
+}
+
+#bet-container {
+    margin-top: 10px;
     color: rgb(0, 255, 0);
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #results {
@@ -375,7 +388,7 @@ With t #scores {
     }
 
     #actions {
-        bottom: 8%;
+        bottom: 3%;
     }
 
     .btn {
