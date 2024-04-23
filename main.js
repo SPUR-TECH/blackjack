@@ -6,8 +6,8 @@ var dealerSum = 0;
 var playerSum = 0;
 var dealerAceCount = 0;
 var playerAceCount = 0;
-var splitAceCount1 = 0; // Ace count for the first split hand
-var splitAceCount2 = 0; // Ace count for the second split hand
+// var splitAceCount1 = 0; // Ace count for the first split hand
+// var splitAceCount2 = 0; // Ace count for the second split hand
 var currentBet = 0;
 var hidden;
 var deck;
