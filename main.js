@@ -255,6 +255,7 @@ function updateMoneyDisplay() {
 	// Check if player's money is 0 and last game has been played
 	if (playerMoney === 0 && currentBet === 0) {
 		document.getElementById("reset-money").style.display = "block";
+		// Check if player's money is less than the lowest bet of 50
 	} else {
 		document.getElementById("reset-money").style.display = "none";
 	}
