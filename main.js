@@ -170,11 +170,11 @@ function handleDeal() {
 
 // Function to deal a card
 function dealCard(hand) {
-	// Check if the deck is empty
-	if (deck.length === 0) {
-		// Shuffle the used cards back into the deck
-		shuffleDeck();
-		showMessage("The deck has been reshuffled.");
+	// Check if the deck is empty or has very few cards left
+	if (deck.length < 10) {
+		// Adjust the threshold as needed
+		shuffleDeck(); // Reshuffle the deck
+		alert("The deck has been reshuffled.");
 	}
 
 	// Deal one card from the deck to the specified hand
@@ -186,13 +186,25 @@ function dealCard(hand) {
 	if (hand.id === "player") {
 		playerSum += getValue(card);
 		playerAceCount += checkAce(card);
+	} else if (hand.id === "dealer" && hand.childNodes.length === 0) {
+		// Deal the hidden card only to the dealer
+		hidden = card; // Store the hidden card
+		cardImg.src = "./img/back.png"; // Display the back side image for the hidden card
+		cardImg.alt = "Hidden Card";
+		dealerSum += getValue(card); // Add the value of the hidden card to dealerSum
+		dealerAceCount += checkAce(card); // Increment dealerAceCount if the hidden card is an ace
+	} else {
+		dealerSum += getValue(card);
+		dealerAceCount += checkAce(card);
 	}
 
 	// Append the card to the specified hand
 	hand.appendChild(cardImg);
 
-	// Update player's score display
-	document.getElementById("player-score").innerText = playerSum;
+	// Update player's score display if it's the player's hand
+	if (hand.id === "player") {
+		document.getElementById("player-score").innerText = playerSum;
+	}
 }
 
 // Function to update money display
@@ -240,9 +252,13 @@ function buildDeck() {
 	let types = ["C", "D", "H", "S"];
 	deck = [];
 
+	// Add multiple copies of each card value to the deck
 	for (let i = 0; i < types.length; i++) {
 		for (let j = 0; j < values.length; j++) {
-			deck.push(values[j] + "-" + types[i]);
+			// Add each card value 4 times (adjust as needed)
+			for (let k = 0; k < 40; k++) {
+				deck.push(values[j] + "-" + types[i]);
+			}
 		}
 	}
 }
@@ -255,87 +271,6 @@ function shuffleDeck() {
 		deck[i] = deck[j];
 		deck[j] = temp;
 	}
-}
-
-// Function to start the game
-function startGame(bet) {
-	currentBet = bet; // Set the current bet amount
-	updateMoneyDisplay(); // Update money display (don't deduct the bet amount again)
-
-	canHit = true; // Reset canHit to true
-
-	// Reset the hasDoubled flag
-	hasDoubled = false;
-
-	// Clear the player and dealer hands
-	document.getElementById("player").innerHTML = "";
-	document.getElementById("dealer").innerHTML = "";
-	dealerSum = 0;
-	playerSum = 0;
-	dealerAceCount = 0; // Reset dealerAceCount
-	playerAceCount = 0;
-
-	// Deal the hidden card for the dealer on every first deal
-	hidden = deck.pop(); // Assign a random card from the deck to the hidden variable
-	let dealerHiddenCardImg = document.createElement("img");
-	dealerHiddenCardImg.src = "./img/back.png"; // Display the back side image for the hidden card
-	dealerHiddenCardImg.alt = "Hidden Card";
-	document.getElementById("dealer").appendChild(dealerHiddenCardImg);
-
-	// Deal the dealer's second card (visible)
-	let card2 = deck.pop();
-	let dealerVisibleCardImg = document.createElement("img");
-	dealerVisibleCardImg.src = "./img/" + card2 + ".png";
-	dealerVisibleCardImg.alt = "Dealer Card";
-	document.getElementById("dealer").appendChild(dealerVisibleCardImg);
-	dealerSum += getValue(card2); // Add the value of the second card to dealerSum
-	dealerAceCount += checkAce(card2); // Increment dealerAceCount if second card is an ace
-
-	// If the hidden card is not an Ace, add its value to dealerSum
-	dealerSum += getValue(hidden);
-	dealerAceCount += checkAce(hidden);
-
-	// Deal the player's initial two cards
-	for (let i = 0; i < 2; i++) {
-		let cardImg = document.createElement("img");
-		let card = deck.pop();
-		cardImg.src = "./img/" + card + ".png";
-		playerSum += getValue(card);
-		playerAceCount += checkAce(card);
-		document.getElementById("player").append(cardImg);
-	}
-
-	// Update score displays
-	document.getElementById("dealer-score").innerText = dealerSum;
-	document.getElementById("player-score").innerText = playerSum;
-
-	// Add event listeners for Hit and Stand
-	document.getElementById("hit").addEventListener("click", hit);
-	document.getElementById("stand").addEventListener("click", stand);
-
-	// Disable "Double" button before dealing cards
-	document.getElementById("double").disabled = true;
-
-	// Check for BLACKJACK!!
-	if (
-		playerSum === 21 &&
-		document.getElementById("player").childNodes.length === 2
-	) {
-		showMessage("BLACKJACK!!");
-		// Update player's blackjack win instantly
-		playerMoney += 2.5 * currentBet; // Double the bet amount (original bet + win)
-		updateMoneyDisplay(); // Update the displayed money
-		// Call resetGame() after a delay
-		setTimeout(resetGame, 2000); // Adjust the delay as needed (in milliseconds)
-	}
-
-	// Enable "Double" button after dealing cards if conditions are met
-	if (playerMoney >= bet) {
-		document.getElementById("double").disabled = false;
-	}
-
-	// Set the deal initiation flag to true
-	isDealInitiated = true; // Set isDealInitiated to true after dealing cards
 }
 
 // Function to determine the outcome of the game
@@ -636,6 +571,7 @@ function showMessage(message) {
 	}, 3000);
 }
 
+// Function to start the game
 function startGame(bet) {
 	currentBet = bet; // Set the current bet amount
 	updateMoneyDisplay(); // Update money display (don't deduct the bet amount again)
