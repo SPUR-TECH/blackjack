@@ -15,8 +15,23 @@ var canHit = true;
 var isDealInitiated = false; // Flag to track whether deal has been initiated
 var hasDoubled = false; // Flag to track if the player has already doubled in the current game
 
+// Function to save player's progress to local storage
+function savePlayerProgress() {
+	localStorage.setItem("playerMoney", playerMoney);
+}
+
+// Function to retrieve player's progress from local storage
+function retrievePlayerProgress() {
+	let savedMoney = localStorage.getItem("playerMoney");
+	if (savedMoney !== null) {
+		playerMoney = parseInt(savedMoney);
+		updateMoneyDisplay(); // Update the displayed money
+	}
+}
+
 // Event listener for window onload
 window.onload = function () {
+	retrievePlayerProgress();
 	updateMoneyDisplay();
 	buildDeck();
 	shuffleDeck();
@@ -210,16 +225,17 @@ function dealCard(hand) {
 // Function to update money display
 function updateMoneyDisplay() {
 	let cashDisplay = document.getElementById("cash");
-	cashDisplay.innerText = "Cash: £" + playerMoney; // Update money display
+	cashDisplay.innerText = "Cash: £" + playerMoney;
 
 	// Check if player's money is 0 and last game has been played
 	if (playerMoney === 0 && currentBet === 0) {
-		// Show the "Reset Money" button
 		document.getElementById("reset-money").style.display = "block";
 	} else {
-		// Hide the "Reset Money" button
 		document.getElementById("reset-money").style.display = "none";
 	}
+
+	// Save player's progress after updating the money display
+	savePlayerProgress();
 }
 
 // Function to reset player's money
