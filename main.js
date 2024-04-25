@@ -60,6 +60,7 @@ window.onload = function () {
 			if (!isDealInitiated) {
 				let chipValue = parseFloat(chip.querySelector(".chip-value").innerText);
 				addChipBet(chipValue);
+				CHIPS.play(); // Play chip sound
 			}
 		});
 	}
@@ -69,6 +70,7 @@ window.onload = function () {
 		.getElementById("fullscreen-btn")
 		.addEventListener("click", function () {
 			enterFullscreen();
+			START.play(); // Play the START sound
 		});
 
 	// Listen for fullscreen change events
@@ -101,6 +103,11 @@ function handleFullscreenChange() {
 	// Hide or show the fullscreen button based on fullscreen state
 	let fullscreenBtn = document.getElementById("fullscreen-btn");
 	fullscreenBtn.style.display = isInFullscreen ? "none" : "block";
+
+	// If not in fullscreen mode, pause the sound
+	if (!isInFullscreen) {
+		START.pause();
+	}
 }
 
 // Function to handle canceling the current bet
@@ -171,6 +178,8 @@ function double() {
 
 		// Deal one additional card to the player
 		dealCard(document.getElementById("player"));
+		// Play the card drop sound
+		CARD_DROP.play();
 
 		// Automatically stand after doubling
 		stand();
@@ -214,7 +223,6 @@ function dealCard(hand) {
 	if (deck.length < 10) {
 		// Adjust the threshold as needed
 		shuffleDeck(); // Reshuffle the deck
-		alert("The deck has been reshuffled.");
 	}
 
 	// Deal one card from the deck to the specified hand
@@ -245,6 +253,9 @@ function dealCard(hand) {
 	if (hand.id === "player") {
 		document.getElementById("player-score").innerText = playerSum;
 	}
+
+	// Play the card drop sound
+	CARD_DROP.play();
 }
 
 // Function to update money display
@@ -388,6 +399,10 @@ function dealerHit() {
 			dealerSum += getValue(card);
 			dealerAceCount += checkAce(card);
 			document.getElementById("dealer").append(cardImg);
+
+			// Play the card drop sound
+			CARD_DROP.play();
+
 			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
@@ -456,6 +471,9 @@ function hit() {
 
 	// Disable the "Double" button after hitting
 	document.getElementById("double").disabled = true;
+
+	// Play the card drop sound
+	CARD_DROP.play();
 }
 
 // Function for player to stand
@@ -480,6 +498,10 @@ function stand() {
 			dealerSum += getValue(card);
 			dealerAceCount += checkAce(card);
 			document.getElementById("dealer").append(cardImg);
+
+			// Play the card drop sound
+			CARD_DROP.play();
+
 			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
@@ -749,6 +771,8 @@ function determineDealerAction() {
 	} else if (dealerSum < 17 || (dealerSum === 17 && dealerAceCount > 0)) {
 		// If dealer's total is less than 17 or dealer has a soft 17, they must hit
 		dealerHit();
+		// Play the card drop sound
+		CARD_DROP.play();
 	} else {
 		// Otherwise, dealer stands
 		dealerStand();
@@ -764,6 +788,10 @@ function dealerHit() {
 			dealerSum += getValue(card);
 			dealerAceCount += checkAce(card);
 			document.getElementById("dealer").append(cardImg);
+
+			// Play the card drop sound
+			CARD_DROP.play();
+
 			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
@@ -817,6 +845,9 @@ function hit() {
 
 	document.getElementById("player").append(cardImg);
 
+	// Play the card drop sound
+	CARD_DROP.play();
+
 	// Update player's score display after adjusting the value of Ace
 	document.getElementById("player-score").innerText = playerSum;
 
@@ -841,6 +872,9 @@ function stand() {
 	document.getElementById("dealer").childNodes[0].src =
 		"./img/" + hidden + ".png";
 
+	// Play the card drop sound when revealing the hidden card
+	CARD_DROP.play();
+
 	// Display the updated score after revealing the hidden card
 	document.getElementById("dealer-score").innerText = dealerSum;
 
@@ -856,6 +890,9 @@ function stand() {
 			dealerSum = reduceAce(dealerSum, dealerAceCount); // Ensure dealer's total is calculated after each card is drawn
 			// Update the displayed score
 			document.getElementById("dealer-score").innerText = dealerSum;
+
+			// Play the card drop sound when a new card is added to the dealer's hand
+			CARD_DROP.play();
 		} else {
 			clearInterval(interval); // Stop drawing cards once the dealer's score is 17 or higher
 			// Dont show the player's score until the player stands
